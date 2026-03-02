@@ -1,0 +1,97 @@
+{
+  "id": "eaa54b0c-99ac-4b72-93bb-ac8c2bdcbff1",
+  "name": "hbn",
+  "players": [
+    {
+      "id": "3c06096d-037b-4ed0-822c-81950471ebaf",
+      "username": "DesignUrResign",
+      "color": "red"
+    },
+    {
+      "id": "68adb74b-90d0-44f4-ab17-e19cfe35592d",
+      "username": "Unlinker",
+      "color": "blue"
+    }
+  ],
+  "status": "finished",
+  "winner": "blue",
+  "moveHistory": [
+    {
+      "turn": 0,
+      "color": "red",
+      "username": "DesignUrResign",
+      "from": [
+        0,
+        6
+      ],
+      "to": [
+        1,
+        5
+      ],
+      "timestamp": 1772429025214
+    },
+    {
+      "turn": 1,
+      "color": "blue",
+      "username": "Unlinker",
+      "from": [
+        7,
+        6
+      ],
+      "to": [
+        6,
+        6
+      ],
+      "timestamp": 1772429035437
+    },
+    {
+      "turn": 2,
+      "color": "red",
+      "username": "DesignUrResign",
+      "from": [
+        0,
+        5
+      ],
+      "to": [
+        1,
+        4
+      ],
+      "timestamp": 1772429050225
+    },
+    {
+      "turn": 3,
+      "color": "blue",
+      "username": "Unlinker",
+      "from": [
+        7,
+        5
+      ],
+      "to": [
+        6,
+        5
+      ],
+      "timestamp": 1772429063582
+    },
+    {
+      "turn": 4,
+      "color": "red",
+      "username": "DesignUrResign",
+      "from": [
+        0,
+        4
+      ],
+      "to": [
+        1,
+        3
+      ],
+      "timestamp": 1772429065476
+    },
+    {
+      "turn": 5,
+      "color": "red",
+      "event": "resigned",
+      "timestamp": 1772429106534
+    }
+  ],
+  "updatedAt": "2026-03-02T05:25:06.535Z"
+}

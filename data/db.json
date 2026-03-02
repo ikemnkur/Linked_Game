@@ -1,0 +1,241 @@
+{
+  "users": [
+    {
+      "id": "5d777c77-7d92-4381-ac5b-746265c78baf",
+      "username": "AGames",
+      "stats": {
+        "wins": 1,
+        "losses": 0,
+        "draws": 0,
+        "gamesPlayed": 1
+      }
+    },
+    {
+      "id": "8af4675f-3480-4d94-9e77-11c077c8c5fd",
+      "username": "Masterplayer",
+      "stats": {
+        "wins": 0,
+        "losses": 1,
+        "draws": 0,
+        "gamesPlayed": 1
+      }
+    },
+    {
+      "id": "6778ca8c-8836-4c60-8d6d-c97ec362477d",
+      "username": "TestUser",
+      "password": "test123",
+      "email": "test@example.com",
+      "stats": {
+        "wins": 0,
+        "losses": 0,
+        "draws": 0,
+        "gamesPlayed": 0
+      },
+      "createdAt": "2026-03-02T07:51:52.913Z"
+    },
+    {
+      "id": "bcae5b72-2a8c-4e78-acb3-a1206bd29daa",
+      "username": "SimpleUser",
+      "password": null,
+      "email": null,
+      "stats": {
+        "wins": 0,
+        "losses": 0,
+        "draws": 0,
+        "gamesPlayed": 0
+      },
+      "createdAt": "2026-03-02T07:52:09.427Z"
+    }
+  ],
+  "games": [
+    {
+      "id": "47f8a2a6-1c26-4581-b5b7-8fef6ee23359",
+      "name": "Masterplayer's Game",
+      "status": "finished",
+      "maxPlayers": 2,
+      "players": [
+        {
+          "id": "8af4675f-3480-4d94-9e77-11c077c8c5fd",
+          "username": "Masterplayer",
+          "color": "red"
+        },
+        {
+          "id": "5d777c77-7d92-4381-ac5b-746265c78baf",
+          "username": "AGames",
+          "color": "blue"
+        }
+      ],
+      "board": [
+        [
+          null,
+          {
+            "color": "red"
+          },
+          {
+            "color": "red"
+          },
+          {
+            "color": "red"
+          },
+          {
+            "color": "red"
+          },
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "color": "red"
+          },
+          {
+            "color": "red"
+          },
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "color": "blue"
+          },
+          null
+        ],
+        [
+          null,
+          {
+            "color": "blue"
+          },
+          {
+            "color": "blue"
+          },
+          {
+            "color": "blue"
+          },
+          {
+            "color": "blue"
+          },
+          {
+            "color": "blue"
+          },
+          null,
+          null
+        ]
+      ],
+      "currentTurn": 1,
+      "turnCount": 3,
+      "centerHoldTracker": {
+        "red": 0,
+        "blue": 0,
+        "green": 0,
+        "yellow": 0
+      },
+      "winner": "blue",
+      "timerMode": "none",
+      "timerValue": 0,
+      "eliminatedColors": [
+        "red"
+      ],
+      "moveHistory": [
+        {
+          "turn": 0,
+          "color": "red",
+          "username": "Masterplayer",
+          "from": [
+            0,
+            6
+          ],
+          "to": [
+            1,
+            6
+          ],
+          "timestamp": 1772429470560
+        },
+        {
+          "turn": 1,
+          "color": "blue",
+          "username": "AGames",
+          "from": [
+            7,
+            6
+          ],
+          "to": [
+            6,
+            6
+          ],
+          "timestamp": 1772430640551
+        },
+        {
+          "turn": 2,
+          "color": "red",
+          "username": "Masterplayer",
+          "from": [
+            0,
+            5
+          ],
+          "to": [
+            1,
+            5
+          ],
+          "timestamp": 1772430649769
+        },
+        {
+          "turn": 3,
+          "color": "red",
+          "event": "resigned",
+          "timestamp": 1772430658686
+        }
+      ],
+      "timerStartsAt": 1772429468699
+    }
+  ]
+}

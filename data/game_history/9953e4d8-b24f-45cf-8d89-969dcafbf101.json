@@ -1,0 +1,41 @@
+{
+  "id": "9953e4d8-b24f-45cf-8d89-969dcafbf101",
+  "name": "asdasd",
+  "players": [
+    {
+      "id": "68adb74b-90d0-44f4-ab17-e19cfe35592d",
+      "username": "Unlinker",
+      "color": "red"
+    },
+    {
+      "id": "3c06096d-037b-4ed0-822c-81950471ebaf",
+      "username": "DesignUrResign",
+      "color": "blue"
+    }
+  ],
+  "status": "finished",
+  "winner": "blue",
+  "moveHistory": [
+    {
+      "turn": 0,
+      "color": "red",
+      "username": "Unlinker",
+      "from": [
+        0,
+        6
+      ],
+      "to": [
+        1,
+        5
+      ],
+      "timestamp": 1772429145101
+    },
+    {
+      "turn": 1,
+      "color": "red",
+      "event": "resigned",
+      "timestamp": 1772429183230
+    }
+  ],
+  "updatedAt": "2026-03-02T05:26:23.231Z"
+}

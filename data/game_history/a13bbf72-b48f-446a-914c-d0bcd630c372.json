@@ -1,0 +1,35 @@
+{
+  "id": "a13bbf72-b48f-446a-914c-d0bcd630c372",
+  "name": "fdfgdfgdfgdfg4reaaaaaaase",
+  "players": [
+    {
+      "id": "a3aa0edc-c858-4c11-86a2-14eb42b1a32f",
+      "username": "Masterplayer",
+      "color": "red"
+    },
+    {
+      "id": "3c06096d-037b-4ed0-822c-81950471ebaf",
+      "username": "DesignUrResign",
+      "color": "blue"
+    }
+  ],
+  "status": "playing",
+  "winner": null,
+  "moveHistory": [
+    {
+      "turn": 0,
+      "color": "red",
+      "username": "Masterplayer",
+      "from": [
+        0,
+        6
+      ],
+      "to": [
+        1,
+        6
+      ],
+      "timestamp": 1772429211714
+    }
+  ],
+  "updatedAt": "2026-03-02T05:26:51.715Z"
+}

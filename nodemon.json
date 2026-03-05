@@ -1,0 +1,7 @@
+{
+  "ignore": [
+    "data/*",
+    "build/",
+    "src/temp/*.js"
+  ]
+}

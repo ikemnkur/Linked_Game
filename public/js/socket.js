@@ -50,6 +50,22 @@ window.SocketClient = (() => {
     getSocket().on('game:drawRequested', fn);
   }
 
+  function joinSpectate(gameId) {
+    getSocket().emit('spectate:join', { gameId });
+  }
+
+  function sendChatMessage(gameId, username, message) {
+    getSocket().emit('spectate:chat:send', { gameId, username, message });
+  }
+
+  function onChatMessage(fn) {
+    getSocket().on('spectate:chat:msg', fn);
+  }
+
+  function onChatHistory(fn) {
+    getSocket().on('spectate:chat:history', fn);
+  }
+
   function off(event, handler) {
     if (socket) {
       socket.off(event, handler);
@@ -63,8 +79,10 @@ window.SocketClient = (() => {
       socket.off('game:moveError');
       socket.off('game:timerTick');
       socket.off('game:drawRequested');
+      socket.off('spectate:chat:msg');
+      socket.off('spectate:chat:history');
     }
   }
 
-  return { connect, getSocket, joinGame, sendMove, requestResign, requestDraw, onLobbyUpdate, onGameUpdate, onMoveError, onTimerTick, onDrawRequested, off, offAll };
+  return { connect, getSocket, joinGame, sendMove, requestResign, requestDraw, onLobbyUpdate, onGameUpdate, onMoveError, onTimerTick, onDrawRequested, joinSpectate, sendChatMessage, onChatMessage, onChatHistory, off, offAll };
 })();

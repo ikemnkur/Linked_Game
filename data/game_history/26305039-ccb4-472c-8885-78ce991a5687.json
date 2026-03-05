@@ -1,0 +1,97 @@
+{
+  "id": "26305039-ccb4-472c-8885-78ce991a5687",
+  "name": "rotation_test",
+  "players": [
+    {
+      "id": "5d777c77-7d92-4381-ac5b-746265c78baf",
+      "username": "AGames",
+      "color": "red"
+    },
+    {
+      "id": "86199058-4648-4f12-90f9-b8e81c3ef64a",
+      "username": "Expert",
+      "color": "blue"
+    }
+  ],
+  "status": "finished",
+  "winner": "blue",
+  "moveHistory": [
+    {
+      "turn": 0,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        0,
+        1
+      ],
+      "to": [
+        1,
+        2
+      ],
+      "timestamp": 1772689245603
+    },
+    {
+      "turn": 1,
+      "color": "blue",
+      "username": "Expert",
+      "from": [
+        7,
+        1
+      ],
+      "to": [
+        6,
+        2
+      ],
+      "timestamp": 1772689249791
+    },
+    {
+      "turn": 2,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        0,
+        6
+      ],
+      "to": [
+        1,
+        6
+      ],
+      "timestamp": 1772689276656
+    },
+    {
+      "turn": 3,
+      "color": "blue",
+      "username": "Expert",
+      "from": [
+        7,
+        6
+      ],
+      "to": [
+        6,
+        6
+      ],
+      "timestamp": 1772689295688
+    },
+    {
+      "turn": 4,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        1,
+        6
+      ],
+      "to": [
+        1,
+        5
+      ],
+      "timestamp": 1772689301093
+    },
+    {
+      "turn": 5,
+      "color": "red",
+      "event": "resigned",
+      "timestamp": 1772689330880
+    }
+  ],
+  "updatedAt": "2026-03-05T05:42:10.881Z"
+}

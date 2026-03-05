@@ -1,0 +1,97 @@
+{
+  "id": "11cdec26-8bdb-46ff-b554-e6285a34e373",
+  "name": "vgv",
+  "players": [
+    {
+      "id": "5d777c77-7d92-4381-ac5b-746265c78baf",
+      "username": "AGames",
+      "color": "red"
+    },
+    {
+      "id": "f3dbb26a-afde-4f32-8cc8-0de51346fefc",
+      "username": "ZugzwangUrThang",
+      "color": "blue"
+    }
+  ],
+  "status": "finished",
+  "winner": "draw",
+  "moveHistory": [
+    {
+      "turn": 0,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        0,
+        1
+      ],
+      "to": [
+        1,
+        1
+      ],
+      "timestamp": 1772689462519
+    },
+    {
+      "turn": 1,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        7,
+        6
+      ],
+      "to": [
+        6,
+        6
+      ],
+      "timestamp": 1772689609677
+    },
+    {
+      "turn": 2,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        0,
+        6
+      ],
+      "to": [
+        1,
+        6
+      ],
+      "timestamp": 1772689616563
+    },
+    {
+      "turn": 3,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        7,
+        1
+      ],
+      "to": [
+        6,
+        1
+      ],
+      "timestamp": 1772689640540
+    },
+    {
+      "turn": 4,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        0,
+        4
+      ],
+      "to": [
+        1,
+        4
+      ],
+      "timestamp": 1772689643962
+    },
+    {
+      "turn": 5,
+      "event": "draw",
+      "reason": "agreement",
+      "timestamp": 1772689648806
+    }
+  ],
+  "updatedAt": "2026-03-05T05:47:28.807Z"
+}

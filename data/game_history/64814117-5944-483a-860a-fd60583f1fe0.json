@@ -1,0 +1,49 @@
+{
+  "id": "64814117-5944-483a-860a-fd60583f1fe0",
+  "name": "asa",
+  "players": [
+    {
+      "id": "5d777c77-7d92-4381-ac5b-746265c78baf",
+      "username": "AGames",
+      "color": "red"
+    },
+    {
+      "id": "f3dbb26a-afde-4f32-8cc8-0de51346fefc",
+      "username": "ZugzwangUrThang",
+      "color": "blue"
+    }
+  ],
+  "status": "playing",
+  "winner": null,
+  "moveHistory": [
+    {
+      "turn": 0,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        0,
+        6
+      ],
+      "to": [
+        1,
+        6
+      ],
+      "timestamp": 1772695084309
+    },
+    {
+      "turn": 1,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        7,
+        1
+      ],
+      "to": [
+        6,
+        1
+      ],
+      "timestamp": 1772695090218
+    }
+  ],
+  "updatedAt": "2026-03-05T07:18:10.219Z"
+}

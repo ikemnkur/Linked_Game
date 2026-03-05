@@ -1,0 +1,329 @@
+{
+  "id": "b94452ac-650a-44a7-ad58-4ba5e9448763",
+  "name": "first game\\",
+  "players": [
+    {
+      "id": "86199058-4648-4f12-90f9-b8e81c3ef64a",
+      "username": "Expert",
+      "color": "red"
+    },
+    {
+      "id": "5d777c77-7d92-4381-ac5b-746265c78baf",
+      "username": "AGames",
+      "color": "blue"
+    }
+  ],
+  "status": "finished",
+  "winner": "red",
+  "moveHistory": [
+    {
+      "turn": 0,
+      "color": "red",
+      "username": "Expert",
+      "from": [
+        0,
+        6
+      ],
+      "to": [
+        1,
+        6
+      ],
+      "timestamp": 1772682014673
+    },
+    {
+      "turn": 1,
+      "color": "blue",
+      "username": "AGames",
+      "from": [
+        7,
+        6
+      ],
+      "to": [
+        6,
+        6
+      ],
+      "timestamp": 1772682018250
+    },
+    {
+      "turn": 2,
+      "color": "red",
+      "username": "Expert",
+      "from": [
+        0,
+        1
+      ],
+      "to": [
+        1,
+        1
+      ],
+      "timestamp": 1772682022971
+    },
+    {
+      "turn": 3,
+      "color": "blue",
+      "username": "AGames",
+      "from": [
+        7,
+        1
+      ],
+      "to": [
+        6,
+        1
+      ],
+      "timestamp": 1772682026396
+    },
+    {
+      "turn": 4,
+      "color": "red",
+      "username": "Expert",
+      "from": [
+        0,
+        5
+      ],
+      "to": [
+        1,
+        5
+      ],
+      "timestamp": 1772682030951
+    },
+    {
+      "turn": 5,
+      "color": "blue",
+      "username": "AGames",
+      "from": [
+        7,
+        2
+      ],
+      "to": [
+        6,
+        2
+      ],
+      "timestamp": 1772682034755
+    },
+    {
+      "turn": 6,
+      "color": "red",
+      "username": "Expert",
+      "from": [
+        0,
+        2
+      ],
+      "to": [
+        1,
+        2
+      ],
+      "timestamp": 1772682039309
+    },
+    {
+      "turn": 7,
+      "color": "blue",
+      "username": "AGames",
+      "from": [
+        7,
+        5
+      ],
+      "to": [
+        6,
+        5
+      ],
+      "timestamp": 1772682043596
+    },
+    {
+      "turn": 8,
+      "color": "red",
+      "username": "Expert",
+      "from": [
+        1,
+        1
+      ],
+      "to": [
+        2,
+        2
+      ],
+      "timestamp": 1772682049871
+    },
+    {
+      "turn": 9,
+      "color": "blue",
+      "username": "AGames",
+      "from": [
+        6,
+        1
+      ],
+      "to": [
+        5,
+        2
+      ],
+      "timestamp": 1772682055329
+    },
+    {
+      "turn": 10,
+      "color": "red",
+      "username": "Expert",
+      "from": [
+        0,
+        3
+      ],
+      "to": [
+        1,
+        3
+      ],
+      "timestamp": 1772682062706
+    },
+    {
+      "turn": 11,
+      "color": "blue",
+      "username": "AGames",
+      "from": [
+        6,
+        6
+      ],
+      "to": [
+        5,
+        5
+      ],
+      "timestamp": 1772682078318
+    },
+    {
+      "turn": 12,
+      "color": "red",
+      "username": "Expert",
+      "from": [
+        1,
+        6
+      ],
+      "to": [
+        2,
+        5
+      ],
+      "timestamp": 1772682081312
+    },
+    {
+      "turn": 13,
+      "color": "blue",
+      "username": "AGames",
+      "from": [
+        7,
+        4
+      ],
+      "to": [
+        6,
+        4
+      ],
+      "timestamp": 1772682086957
+    },
+    {
+      "turn": 14,
+      "color": "red",
+      "username": "Expert",
+      "from": [
+        1,
+        3
+      ],
+      "to": [
+        2,
+        3
+      ],
+      "timestamp": 1772682091876
+    },
+    {
+      "turn": 15,
+      "color": "blue",
+      "username": "AGames",
+      "from": [
+        6,
+        4
+      ],
+      "to": [
+        5,
+        4
+      ],
+      "timestamp": 1772682094730
+    },
+    {
+      "turn": 16,
+      "color": "red",
+      "username": "Expert",
+      "from": [
+        2,
+        2
+      ],
+      "to": [
+        3,
+        3
+      ],
+      "timestamp": 1772682099744
+    },
+    {
+      "turn": 17,
+      "color": "blue",
+      "username": "AGames",
+      "from": [
+        5,
+        4
+      ],
+      "to": [
+        4,
+        4
+      ],
+      "timestamp": 1772682112408
+    },
+    {
+      "turn": 18,
+      "color": "red",
+      "username": "Expert",
+      "from": [
+        1,
+        2
+      ],
+      "to": [
+        2,
+        2
+      ],
+      "timestamp": 1772682116695
+    },
+    {
+      "turn": 19,
+      "color": "blue",
+      "username": "AGames",
+      "from": [
+        5,
+        2
+      ],
+      "to": [
+        4,
+        3
+      ],
+      "timestamp": 1772682122889
+    },
+    {
+      "turn": 20,
+      "color": "red",
+      "username": "Expert",
+      "from": [
+        2,
+        5
+      ],
+      "to": [
+        3,
+        4
+      ],
+      "timestamp": 1772682133811
+    },
+    {
+      "turn": 21,
+      "color": "blue",
+      "username": "AGames",
+      "from": [
+        4,
+        3
+      ],
+      "to": [
+        5,
+        2
+      ],
+      "timestamp": 1772682170543
+    }
+  ],
+  "updatedAt": "2026-03-05T03:42:50.543Z"
+}

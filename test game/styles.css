@@ -1,0 +1,23 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+  }
+  
+  #gameCanvas {
+    border: 1px solid #000;
+    margin-bottom: 10px;
+  }
+  
+  #hud {
+    display: inline-block;
+    text-align: left;
+  }
+  
+  #controls {
+    margin-top: 10px;
+  }
+  
+  #controls button {
+    margin-right: 5px;
+  }
+  

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>VideoScrambler - Privacy-Focused Video Tools</title>
+    <!-- CSS Variables and Main Styling -->
+    <style>
+        /* CSS Variables for consistent theming */
+        :root {
+            --gap: 12px;
+            --bg: #0f172a;
+            --card: #111827;
+            --muted: #94a3b8;
+            --text: #e5e7eb;
+            --accent: #22d3ee;
+            --border: #1f2937;
+        }
+
+        /* Basic page layout and styling */
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+            background: linear-gradient(180deg, #0b1220, #0f172a);
+            color: var(--text);
+        }
+
+        /* Typography */
+        h1, h2 {
+            margin: .2rem 0 0.6rem;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            color: #cbd5e1;
+        }
+
+        /* Layout utilities */
+        .wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .row {
+            display: flex;
+            gap: var(--gap);
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .row:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Button styles */
+        .btn {
+            background: #0b1020;
+            border: 1px solid #1f2b45;
+            color: var(--text);
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 4px 6px 4px 0;
+            white-space: nowrap;
+            text-decoration: none;
+            display: inline-block;
+            transition: border-color 0.3s;
+        }
+
+        .btn:hover {
+            border-color: #334155;
+        }
+
+        .btn-accent {
+            background: linear-gradient(90deg, #06b6d4, #22d3ee);
+            color: #001018;
+            border: none;
+            font-weight: 600;
+        }
+
+        .btn-accent:hover {
+            background: linear-gradient(90deg, #0891b2, #06b6d4);
+        }
+
+        /* UI elements */
+        .pill {
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: #0b1220;
+            border: 1px solid #1e293b;
+            color: #93c5fd;
+            font-size: .78rem;
+            margin: 2px 4px;
+        }
+
+        .hint {
+            font-size: .85rem;
+            color: var(--muted);
+            margin: 4px 0 8px 0;
+            line-height: 1.4;
+        }
+
+        /* Feature list styling */
+        .features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features li {
+            background: #0b1020;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .features li:last-child {
+            margin-bottom: 0;
+        }
+
+        .feature-icon {
+            font-size: 1.2rem;
+            margin-top: 2px;
+            color: var(--accent);
+        }
+
+        .feature-content {
+            flex: 1;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .feature-desc {
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        /* Header improvements */
+        header {
+            margin-bottom: 20px;
+        }
+
+        header .row {
+            align-items: flex-start;
+            margin-bottom: 0;
+        }
+
+        /* Status displays */
+        .kpi {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        .kpi .pill {
+            margin: 2px;
+        }
+
+        .kpi .pill b {
+            color: #e2e8f0;
+        }
+
+        .footer {
+            margin-top: 2em;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .wrap {
+                padding: 16px;
+            }
+            .card {
+                padding: 16px;
+            }
+            header .row {
+                flex-direction: column;
+                gap: 16px;
+            }
+            .kpi {
+                justify-content: flex-start;
+            }
+            .btn {
+                width: 100%;
+                margin: 4px 0;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <!-- Header section with title and application info -->
+        <header class="row" style="justify-content:space-between">
+            <div>
+                <h1>🎞️ VideoScrambler</h1>
+                <div class="hint"> Leak-Prevention/Privacy-focused video scrambling tools for content protection, creative projects, and secure mass-leak free sharing.</div>
+            </div>
+            <!-- Application status indicators -->
+            <div class="kpi">
+                <span class="pill">Privacy: <b>Local Processing</b></span>
+                <span class="pill">Format: <b>WebM Export</b></span>
+                <span class="pill">Security: <b>Encrypted Keys</b></span>
+            </div>
+        </header>
+
+        <!-- Main content card -->
+        <section class="card">
+            <h2>🔒 Secure Video Protection Suite</h2>
+            <div class="hint">
+                VideoScrambler provides client-side video scrambling with cryptographic-grade security. 
+                All processing happens in your browser - your videos never leave your device.
+            </div>
+
+            <h2>✨ Key Features</h2>
+            <ul class="features">
+                <li>
+                    <div class="feature-icon">🎬</div>
+                    <div class="feature-content">
+                        <div class="feature-title">Advanced Video Scrambling</div>
+                        <div class="feature-desc">Grid-based tile scrambling with seeded permutations for consistent, reversible video protection.</div>
+                    </div>
+                </li>
+                <li>
+                    <div class="feature-icon">🔐</div>
+                    <div class="feature-content">
+                        <div class="feature-title">Cryptographic Key Generation</div>
+                        <div class="feature-desc">Secure Base64-encoded keys with JSON metadata for reliable unscrambling and sharing.</div>
+                    </div>
+                </li>
+                <li>
+                    <div class="feature-icon">🎯</div>
+                    <div class="feature-content">
+                        <div class="feature-title">Perfect Reconstruction</div>
+                        <div class="feature-desc">Lossless unscrambling process that perfectly restores your original video content.</div>
+                    </div>
+                </li>
+                <li>
+                    <div class="feature-icon">🛡️</div>
+                    <div class="feature-content">
+                        <div class="feature-title">Privacy-First Design</div>
+                        <div class="feature-desc">100% client-side processing - your videos and keys never touch external servers.</div>
+                    </div>
+                </li>
+                <li>
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-content">
+                        <div class="feature-title">Real-Time Preview</div>
+                        <div class="feature-desc">Live canvas rendering with automatic recording capabilities for seamless workflow.</div>
+                    </div>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Action buttons section -->
+        <section class="card">
+            <h2>🚀 Get Started</h2>
+            <div class="hint">Choose your workflow based on whether you want to protect content or restore scrambled videos.</div>
+            
+            <div class="row" style="margin-top: 16px;">
+                <a href="scrambler.html" class="btn btn-accent">🎞️ Scramble Videos</a>
+                <a href="unscrambler.html" class="btn">🔓 Unscramble Videos</a>
+                <a href="https://key-ching.com/info" class="btn">💰 Trade Keys on Key-Ching</a>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div>&copy; 2024 VideoScrambler. Privacy-focused video tools. All processing happens locally in your browser.</div>
+        </footer>
+    </div>
+</body>
+</html>

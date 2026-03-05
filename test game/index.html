@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Custom Board Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <h1>Custom Board Game</h1>
+    <canvas id="gameCanvas" width="640" height="640"></canvas>
+    <br>
+    <div id="hud">
+        <p>Current Turn: <span id="currentTurn">Red</span></p>
+        <p>Moves Left: <span id="movesLeft">5</span></p>
+        <p>Red Pieces: <span id="redPieces">24</span></p>
+        <p>Blue Pieces: <span id="bluePieces">24</span></p>
+
+        <div id="controls">
+            <button id="moveButton">Move</button>
+            <button id="promoteButton">Promote/Demote</button>
+            <button id="attackButton">Attack</button>
+            <button id="endTurnButton">End Turn</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+
+</html>

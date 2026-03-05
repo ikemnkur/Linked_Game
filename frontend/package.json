@@ -1,0 +1,51 @@
+{
+  "name": "Video Scrambler",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview --port 5173",
+    "server": "node server.cjs",
+    "server-json": "json-server --watch db.json --port 3001",
+    "setup-mysql": "./setup-mysql.sh"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^6.1.6",
+    "@mui/material": "^6.1.6",
+    "@stripe/react-stripe-js": "^5.3.0",
+    "axios": "^1.13.2",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "json-server": "^1.0.0-beta.3",
+    "jsonwebtoken": "^9.0.3",
+    "mui": "^0.0.1",
+    "multer": "^2.0.2",
+    "mysql2": "^3.15.1",
+    "qrcode": "^1.5.4",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-qr-code": "^2.0.18",
+    "react-router-dom": "^6.26.2",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.36.0",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.3",
+    "eslint": "^9.36.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.4.0",
+    "vite": "^7.1.7",
+    "vite-plugin-pwa": "^1.1.0",
+    "workbox-window": "^7.3.0"
+  }
+}

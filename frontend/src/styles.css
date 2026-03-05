@@ -1,0 +1,34 @@
+:root{
+--bg:#0a0a0a; /* black-ish */
+--paper:#ffffff; /* white */
+--ink:#111111; /* near black text */
+--muted:#e6e6e6; /* subtle gray borders */
+--dull-yellow:#c2a800; /* dull/industrial yellow */
+--bright-green:#00e676; /* bright green */
+}
+html,body,#root{height:100%;}
+body{
+  margin:0;
+  background:var(--bg);
+  /* Set default zoom to 80% for less cluttered mobile experience */
+  zoom: 0.8;
+  /* Alternative using transform (uncomment if zoom doesn't work on some browsers) */
+  /* transform: scale(0.8);
+  transform-origin: 0 0; */
+}
+
+/* Responsive zoom: Only apply zoom on smaller screens */
+@media (max-width: 768px) {
+  body {
+    zoom: 0.75; /* Even smaller on mobile devices */
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  body {
+    zoom: 0.85; /* Slightly larger on tablets */
+  }
+}
+
+/* Utility – optional */
+.card-black{background:#111;color:#767676;border:1px solid #222;}

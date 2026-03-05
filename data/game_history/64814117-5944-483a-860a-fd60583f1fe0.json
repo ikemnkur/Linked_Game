@@ -13,8 +13,8 @@
       "color": "blue"
     }
   ],
-  "status": "playing",
-  "winner": null,
+  "status": "finished",
+  "winner": "blue",
   "moveHistory": [
     {
       "turn": 0,
@@ -43,7 +43,741 @@
         1
       ],
       "timestamp": 1772695090218
+    },
+    {
+      "turn": 2,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        0,
+        1
+      ],
+      "to": [
+        1,
+        1
+      ],
+      "timestamp": 1772695127793
+    },
+    {
+      "turn": 3,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        7,
+        6
+      ],
+      "to": [
+        6,
+        5
+      ],
+      "timestamp": 1772695130424
+    },
+    {
+      "turn": 4,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        0,
+        4
+      ],
+      "to": [
+        1,
+        5
+      ],
+      "timestamp": 1772695679468
+    },
+    {
+      "turn": 5,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        7,
+        3
+      ],
+      "to": [
+        6,
+        4
+      ],
+      "timestamp": 1772695690834
+    },
+    {
+      "turn": 6,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        1,
+        6
+      ],
+      "to": [
+        2,
+        5
+      ],
+      "timestamp": 1772695717691
+    },
+    {
+      "turn": 7,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        6,
+        5
+      ],
+      "to": [
+        5,
+        4
+      ],
+      "timestamp": 1772695757635
+    },
+    {
+      "turn": 8,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        0,
+        5
+      ],
+      "to": [
+        1,
+        4
+      ],
+      "timestamp": 1772695800394
+    },
+    {
+      "turn": 9,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        7,
+        5
+      ],
+      "to": [
+        6,
+        5
+      ],
+      "timestamp": 1772695803045
+    },
+    {
+      "turn": 10,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        1,
+        5
+      ],
+      "to": [
+        2,
+        4
+      ],
+      "timestamp": 1772695806913
+    },
+    {
+      "turn": 11,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        6,
+        5
+      ],
+      "to": [
+        5,
+        5
+      ],
+      "timestamp": 1772695809876
+    },
+    {
+      "turn": 12,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        2,
+        5
+      ],
+      "to": [
+        3,
+        4
+      ],
+      "timestamp": 1772695813494
+    },
+    {
+      "turn": 13,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        5,
+        5
+      ],
+      "to": [
+        4,
+        4
+      ],
+      "timestamp": 1772695820954
+    },
+    {
+      "turn": 14,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        2,
+        4
+      ],
+      "to": [
+        3,
+        3
+      ],
+      "timestamp": 1772695825293
+    },
+    {
+      "turn": 15,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        7,
+        2
+      ],
+      "to": [
+        6,
+        2
+      ],
+      "timestamp": 1772695833581
+    },
+    {
+      "turn": 16,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        1,
+        4
+      ],
+      "to": [
+        2,
+        4
+      ],
+      "timestamp": 1772695842245
+    },
+    {
+      "turn": 17,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        6,
+        1
+      ],
+      "to": [
+        5,
+        2
+      ],
+      "timestamp": 1772695846613
+    },
+    {
+      "turn": 18,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        3,
+        3
+      ],
+      "to": [
+        4,
+        4
+      ],
+      "timestamp": 1772695850354
+    },
+    {
+      "turn": 19,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        5,
+        5
+      ],
+      "to": [
+        4,
+        4
+      ],
+      "timestamp": 1772695870430
+    },
+    {
+      "turn": 20,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        1,
+        1
+      ],
+      "to": [
+        2,
+        2
+      ],
+      "timestamp": 1772695904404
+    },
+    {
+      "turn": 21,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        4,
+        4
+      ],
+      "to": [
+        4,
+        3
+      ],
+      "timestamp": 1772695928506
+    },
+    {
+      "turn": 22,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        3,
+        4
+      ],
+      "to": [
+        4,
+        4
+      ],
+      "timestamp": 1772695938516
+    },
+    {
+      "turn": 23,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        6,
+        2
+      ],
+      "to": [
+        5,
+        3
+      ],
+      "timestamp": 1772695953502
+    },
+    {
+      "turn": 24,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        2,
+        4
+      ],
+      "to": [
+        3,
+        4
+      ],
+      "timestamp": 1772695959541
+    },
+    {
+      "turn": 25,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        5,
+        3
+      ],
+      "to": [
+        3,
+        5
+      ],
+      "timestamp": 1772695986287
+    },
+    {
+      "turn": 26,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        3,
+        4
+      ],
+      "to": [
+        4,
+        3
+      ],
+      "timestamp": 1772696001681
+    },
+    {
+      "turn": 27,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        5,
+        2
+      ],
+      "to": [
+        3,
+        4
+      ],
+      "timestamp": 1772696035221
+    },
+    {
+      "turn": 28,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        2,
+        2
+      ],
+      "to": [
+        3,
+        2
+      ],
+      "timestamp": 1772696039682
+    },
+    {
+      "turn": 29,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        5,
+        3
+      ],
+      "to": [
+        4,
+        3
+      ],
+      "timestamp": 1772696045206
+    },
+    {
+      "turn": 30,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        0,
+        2
+      ],
+      "to": [
+        1,
+        2
+      ],
+      "timestamp": 1772696060182
+    },
+    {
+      "turn": 31,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        7,
+        4
+      ],
+      "to": [
+        6,
+        5
+      ],
+      "timestamp": 1772696064873
+    },
+    {
+      "turn": 32,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        0,
+        3
+      ],
+      "to": [
+        1,
+        3
+      ],
+      "timestamp": 1772696067341
+    },
+    {
+      "turn": 33,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        6,
+        5
+      ],
+      "to": [
+        5,
+        5
+      ],
+      "timestamp": 1772696069242
+    },
+    {
+      "turn": 34,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        1,
+        2
+      ],
+      "to": [
+        2,
+        3
+      ],
+      "timestamp": 1772696073770
+    },
+    {
+      "turn": 35,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        5,
+        5
+      ],
+      "to": [
+        4,
+        4
+      ],
+      "timestamp": 1772696083261
+    },
+    {
+      "turn": 36,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        3,
+        2
+      ],
+      "to": [
+        4,
+        3
+      ],
+      "timestamp": 1772696097131
+    },
+    {
+      "turn": 37,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        4,
+        4
+      ],
+      "to": [
+        2,
+        2
+      ],
+      "timestamp": 1772696121457
+    },
+    {
+      "turn": 38,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        4,
+        3
+      ],
+      "to": [
+        3,
+        4
+      ],
+      "timestamp": 1772696159690
+    },
+    {
+      "turn": 39,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        5,
+        3
+      ],
+      "to": [
+        4,
+        3
+      ],
+      "timestamp": 1772696163883
+    },
+    {
+      "turn": 40,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        3,
+        4
+      ],
+      "to": [
+        3,
+        3
+      ],
+      "timestamp": 1772696169061
+    },
+    {
+      "turn": 41,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        6,
+        4
+      ],
+      "to": [
+        5,
+        5
+      ],
+      "timestamp": 1772696174043
+    },
+    {
+      "turn": 42,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        1,
+        3
+      ],
+      "to": [
+        2,
+        4
+      ],
+      "timestamp": 1772696178984
+    },
+    {
+      "turn": 43,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        5,
+        4
+      ],
+      "to": [
+        4,
+        4
+      ],
+      "timestamp": 1772696184406
+    },
+    {
+      "turn": 44,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        2,
+        4
+      ],
+      "to": [
+        3,
+        4
+      ],
+      "timestamp": 1772696226073
+    },
+    {
+      "turn": 45,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        4,
+        3
+      ],
+      "to": [
+        3,
+        4
+      ],
+      "timestamp": 1772696234838
+    },
+    {
+      "turn": 46,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        2,
+        3
+      ],
+      "to": [
+        3,
+        4
+      ],
+      "timestamp": 1772696250849
+    },
+    {
+      "turn": 47,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        5,
+        5
+      ],
+      "to": [
+        5,
+        4
+      ],
+      "timestamp": 1772696278497
+    },
+    {
+      "turn": 48,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        3,
+        4
+      ],
+      "to": [
+        4,
+        3
+      ],
+      "timestamp": 1772696322697
+    },
+    {
+      "turn": 49,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        5,
+        4
+      ],
+      "to": [
+        4,
+        3
+      ],
+      "timestamp": 1772696332836
+    },
+    {
+      "turn": 50,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        3,
+        2
+      ],
+      "to": [
+        2,
+        3
+      ],
+      "timestamp": 1772696340287
+    },
+    {
+      "turn": 51,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        4,
+        5
+      ],
+      "to": [
+        3,
+        4
+      ],
+      "timestamp": 1772696343138
+    },
+    {
+      "turn": 52,
+      "color": "red",
+      "username": "AGames",
+      "from": [
+        2,
+        3
+      ],
+      "to": [
+        3,
+        4
+      ],
+      "timestamp": 1772696346806
+    },
+    {
+      "turn": 53,
+      "color": "blue",
+      "username": "ZugzwangUrThang",
+      "from": [
+        4,
+        5
+      ],
+      "to": [
+        3,
+        4
+      ],
+      "timestamp": 1772696351328
+    },
+    {
+      "turn": 54,
+      "color": "red",
+      "event": "resigned",
+      "timestamp": 1772696377632
     }
   ],
-  "updatedAt": "2026-03-05T07:18:10.219Z"
+  "updatedAt": "2026-03-05T07:39:37.633Z"
 }

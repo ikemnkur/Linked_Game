@@ -111,8 +111,9 @@ window.SpectatePage = (() => {
 
     // Live board updates
     gameUpdateHandler = (data) => {
+      const prevState = gameState;
       gameState = data;
-      applyGameState(data);
+      applyGameState(data, prevState);
     };
     SocketClient.onGameUpdate(gameUpdateHandler);
 
@@ -138,7 +139,7 @@ window.SpectatePage = (() => {
     });
   }
 
-  function applyGameState(game) {
+  function applyGameState(game, prevState) {
     // Update title
     const title = document.getElementById('spectate-title');
     if (title) {
@@ -150,8 +151,15 @@ window.SpectatePage = (() => {
       }
     }
 
-    // Update board
-    if (renderer && game.board) {
+    // Check for a new regular move to animate
+    const prevMoveCount = prevState ? (prevState.moveHistory || []).length : 0;
+    const newMoveCount = (game.moveHistory || []).length;
+    const lastMove = newMoveCount > 0 ? game.moveHistory[newMoveCount - 1] : null;
+    const isNewRegularMove = lastMove && lastMove.from && lastMove.to && newMoveCount > prevMoveCount;
+
+    if (isNewRegularMove && prevState && prevState.board && renderer) {
+      renderer.animateMove(prevState.board, game.board, lastMove.from, lastMove.to);
+    } else if (renderer && game.board) {
       renderer.setBoard(game.board);
       renderer.clearHighlights();
     }

@@ -432,7 +432,7 @@ io.on('connection', (socket) => {
 
     // Win if held for 2 turns
     for (const color of Object.keys(game.centerHoldTracker)) {
-      if (game.centerHoldTracker[color] >= 2) {
+      if (game.centerHoldTracker[color] >= 1) {
         game.winner = color;
         game.status = 'finished';
         game.finishedAt = Date.now();

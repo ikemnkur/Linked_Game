@@ -125,13 +125,24 @@ window.GamePage = (() => {
         // Check if it was a special event
         if (lastMove.event === 'eliminated' || lastMove.event === 'resigned') {
           // Don't play move sound for eliminations/resignations
+          if (lastMove.event === 'eliminated') {
+            SoundManager.play('elimination');
+          } else if (lastMove.event === 'resigned') {
+            SoundManager.play('resign');
+          }
         } else if (lastMove.from && lastMove.to) {
           // Regular move - check if it was a capture
           const dr = Math.abs(lastMove.to[0] - lastMove.from[0]);
           const dc = Math.abs(lastMove.to[1] - lastMove.from[1]);
           const isAttack = (dr === 1 && dc === 1);
           const isHop = (dr === 2 && dc === 2);
-          if (isAttack) {
+          // Check old board to see if there was an enemy piece at the destination
+          const destCell = gameState && gameState.board
+            ? gameState.board[lastMove.to[0]][lastMove.to[1]]
+            : null;
+          const hadEnemy = destCell !== null && destCell !== undefined
+            && destCell.color !== lastMove.color;
+          if (isAttack && hadEnemy) {
             SoundManager.play('hit');
           } else if (isHop) {
             SoundManager.play('capture');
@@ -147,20 +158,30 @@ window.GamePage = (() => {
       if (game.status === 'finished' && previousGameStatus === 'playing') {
         const user = getUser();
         const userPlayer = game.players.find(p => p.id === user.id);
-
-        if (game.winner === 'draw') {
-          // Draw - no win/lose sound
-          SoundManager.play('draw');
-        } else if (userPlayer && userPlayer.color === game.winner) {
-          SoundManager.play('win');
-        } else if (userPlayer) {
-          SoundManager.play('lose');
-        }
+        setTimeout(() => {
+          if (game.winner === 'draw') {
+            // Draw - no win/lose sound
+            SoundManager.play('draw');
+          } else if (userPlayer && userPlayer.color === game.winner) {
+            SoundManager.play('win');
+          } else if (userPlayer) {
+            SoundManager.play('lose');
+          }
+        }, 1000); // Delay to allow win banner to show
       }
 
       previousGameStatus = game.status;
 
       previousPlayerCount = game.players.length;
+
+      // Detect if there's a new regular move to animate
+      const lastMove = (game.moveHistory || []).length > 0
+        ? game.moveHistory[game.moveHistory.length - 1]
+        : null;
+      const isNewRegularMove = lastMove && lastMove.from && lastMove.to
+        && (game.moveHistory.length > ((gameState && gameState.moveHistory) || []).length);
+
+      const oldBoard = gameState ? gameState.board : null;
 
       // Update game state
       gameState = game;
@@ -170,7 +191,15 @@ window.GamePage = (() => {
         localTurnStart = game.turnStartTs || Date.now();
         currentTickColor = game.players[game.currentTurn]?.color || null;
       }
-      updateUI(user);
+
+      // Animate if we have an old board and a new move; otherwise just update
+      if (isNewRegularMove && oldBoard && renderer) {
+        // Update UI text elements (turn indicator, clocks, move log) immediately
+        updateUI(user, true); // true = skip setBoard
+        renderer.animateMove(oldBoard, game.board, lastMove.from, lastMove.to);
+      } else {
+        updateUI(user);
+      }
     };
     SocketClient.onGameUpdate(gameUpdateHandler);
 
@@ -297,10 +326,10 @@ window.GamePage = (() => {
     } catch { }
   }
 
-  function updateUI(user) {
+  function updateUI(user, skipBoard) {
     if (!gameState || !renderer) return;
 
-    renderer.setBoard(gameState.board);
+    if (!skipBoard) renderer.setBoard(gameState.board);
 
     // Title
     document.getElementById('game-title').textContent = gameState.name;

@@ -11,6 +11,8 @@ window.SoundManager = (() => {
     win: new Audio('/assets/sounds/WinGame.wav'),
     lose: new Audio('/assets/sounds/LoseGame.wav'),
     draw: new Audio('/assets/sounds/DrawGame.wav'),
+    elimination: new Audio('/assets/sounds/Elimination.mp3'),
+    resign: new Audio('/assets/sounds/Resign.mp3'),
   };
 
   // Preload all sounds

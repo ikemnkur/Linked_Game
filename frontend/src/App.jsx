@@ -20,53 +20,17 @@ import PurchaseHistory from './pages/PurchaseHistory';
 // import Redeem from './pages/Redeem';
 import ProtectedRoute from './components/ProtectedRoute';
 import Account from './pages/Account';
-// import { fetchUserProfile } from './api/client';
+
 import { useNavigate } from 'react-router-dom';
-// import YourKeys from './pages/YourKeys';
-// import Listings from './pages/Listing';
-import Purchase from './pages/PurchaseCrypto';
+
 import PurchaseCrypto from './pages/PurchaseCrypto';
 import PurchaseCashApp from './pages/PurchaseCashApp';
 import PurchasePaypal from './pages/PurchasePaypal';
 import PurchaseStripe from './pages/PurchaseStripe';
 import Info from './pages/Info';
-// import SignUp2Unlock from './pages/SignUp2Unlock';
-// import UnlockPreview from './pages/UnlockPreview';
+
 import LoadingPage from './pages/Loading';
 
-import VideoScrambler from './pages/VideoScrambler';
-import VideoScramblerBasic from './pages/VideoScramblerBasic';
-import VideoUnscrambler from './pages/VideoUnscrambler';
-import VideoUnscramblerBasic from './pages/VideoUnscramblerBasic';
-
-import PhotoScrambler from './pages/PhotoScrambler';
-import PhotoScramblerBasic from './pages/PhotoScramblerBasic';
-import PhotoUnscrambler from './pages/PhotoUnscrambler';
-import PhotoUnscramblerBasic from './pages/PhotoUnscramblerBasic';
-
-import AudioScrambler from './pages/AudioScrambler';
-import AudioScramblerPro from './pages/AudioScramblerPro';
-import AudioUnscrambler from './pages/AudioUnscrambler';
-import AudioUnscramblerPro from './pages/AudioUnscramblerPro';
-import AudioTagging from './pages/AudioTagging';
-import AudioWatermarkEncoder from './pages/AudioWatermarkEncoder';
-// import AudioWatermarkDetector from './pages/AudioWatermarkDetector';
-import AudioWatermarkDetectorGoertzel from './pages/AudioWatermarkDetectorGoertzel';
-import TestSpellOutUsername from './pages/TestSpellOutUsername';
-
-
-import PhotoScramblerPro from './pages/PhotoScramblerPro';
-import PhotoUnscramblerPro from './pages/PhotoUnscramblerPro';
-
-import VideoScramblerStandard from './pages/VideoScramblerStandard';
-import VideoUnscramblerStandard from './pages/VideoUnscramblerStandard';
-
-import VideoScramblerPro from './pages/VideoScramblerPro';
-import VideoUnscramblerPro from './pages/VideoUnscramblerPro';
-
-import PhotoLeakChecker from './pages/PhotoLeakChecker';
-import VideoLeakChecker from './pages/VideoLeakChecker';
-import AudioLeakChecker from './pages/AudioLeakChecker';
 
 import Plans from './pages/Plans';
 
@@ -94,7 +58,7 @@ import './styles.css';
 import { ToastProvider } from './contexts/ToastContext';
 import { FingerprintProvider } from './contexts/FingerprintContext';
 import ErrorBoundary from './components/ErrorBoundary';
-import { fetchUserData } from './utils/fetchUserData';
+// import { fetchUserData } from './utils/fetchUserData';
 
 // import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { GA_TRACKING_ID, pageview } from './utils/gtag';
@@ -292,16 +256,12 @@ export default function App() {
 
                 {/* <Route path="/intro" element={<Intro />} /> */}
 
-                {/* Video Editor */}
+    
 
                 {/* Free Services */}
 
                 <>
 
-                  <Route path="/photo-scrambler" element={<PhotoScrambler />} />
-                  <Route path="/photo-unscrambler" element={<PhotoUnscrambler />} />
-                  <Route path="/video-unscrambler" element={<VideoUnscrambler />} />
-                  <Route path="/video-scrambler" element={<VideoScrambler />} />
 
                 </>
                 {/* ) : null} */}
@@ -309,12 +269,10 @@ export default function App() {
                 {/* Basic Services Rules */}
                 {accountType === "basic" || accountType === "standard" || accountType === "premium" || ((dayPassMode === 'basic' || dayPassMode === 'standard' || dayPassMode === 'premium') && new Date(dayPassExpiry) > new Date()) ? (
                   <>
-                    {/* Video Editor */}
 
-                    <Route path="/video-scrambler-basic" element={<VideoScramblerBasic />} />
 
-                    <Route path="/video-unscrambler-basic" element={<VideoUnscramblerBasic />} />
-                    
+
+
                   </>
                 ) : null}
 
@@ -323,15 +281,10 @@ export default function App() {
                 {accountType === 'premium' || (dayPassMode === 'premium' && new Date(dayPassExpiry) > new Date()) ? (
                   <>
 
-                    <Route path="/video-scrambler-pro" element={<VideoScramblerPro />} />
-
-                    <Route path="/video-unscrambler-pro" element={<VideoUnscramblerPro />} />
-
-
                   </>
                 ) : null}
 
-                <Route path="/audio-tagging" element={<AudioTagging />} />
+                {/* <Route path="/audio-tagging" element={<AudioTagging />} /> */}
 
                 {/* Subscription Plans */}
                 <Route path="/subscription/plans" element={<SubscriptionPlans />} />

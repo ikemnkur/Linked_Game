@@ -33,6 +33,7 @@
     "react-dom": "^19.1.1",
     "react-qr-code": "^2.0.18",
     "react-router-dom": "^6.26.2",
+    "socket.io-client": "^4.8.3",
     "uuid": "^13.0.0"
   },
   "devDependencies": {

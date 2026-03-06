@@ -58,6 +58,17 @@ import './styles.css';
 import { ToastProvider } from './contexts/ToastContext';
 import { FingerprintProvider } from './contexts/FingerprintContext';
 import ErrorBoundary from './components/ErrorBoundary';
+
+// ─── Linked Game Pages ───────────────────────────────────
+import { GameToastProvider } from './game/GameToast';
+import GameAuth from './game/pages/GameAuth';
+import LobbyPage from './game/pages/LobbyPage';
+import GameScreen from './game/pages/GameScreen';
+import PracticePage from './game/pages/PracticePage';
+import StatsPage from './game/pages/StatsPage';
+import ReviewPage from './game/pages/ReviewPage';
+import RulesPage from './game/pages/RulesPage';
+import SpectatePage from './game/pages/SpectatePage';
 // import { fetchUserData } from './utils/fetchUserData';
 
 // import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
@@ -185,6 +196,7 @@ export default function App() {
       <ErrorBoundary>
         <ToastProvider>
           <FingerprintProvider>
+            <GameToastProvider>
             <BrowserRouter>
               <TrackPageViews />
               <NavBar />
@@ -216,7 +228,8 @@ export default function App() {
                   <Route path="/purchase-paypal" element={<PurchasePaypal />} />
                   <Route path="/purchase-cashapp" element={<PurchaseCashApp />} />
                   <Route path="/purchase-history" element={<PurchaseHistory />} />
-                  <Route path="/account" element={<Account />} />
+                  <Route path="/account" element={<LobbyPage />} />
+                  <Route path="/lobby" element={<LobbyPage />} />
                 </>
 
                 {/* Main Route */}
@@ -295,12 +308,24 @@ export default function App() {
 
                 <Route path="/stripe/success" element={<PurchaseStripeSuccessful />} />
 
+                {/* ─── Linked Game Routes ─────────────────────── */}
+                <Route path="/game-auth" element={<GameAuth />} />
+                <Route path="/lobby" element={<LobbyPage />} />
+                <Route path="/game/:gameId" element={<GameScreen />} />
+                <Route path="/practice" element={<PracticePage />} />
+                <Route path="/stats" element={<StatsPage />} />
+                <Route path="/review/:gameId" element={<ReviewPage />} />
+                <Route path="/how-to-play" element={<RulesPage />} />
+                <Route path="/rules" element={<RulesPage />} />
+                <Route path="/spectate/:gameId" element={<SpectatePage />} />
+
                 {/* need a redirect or fallback route if not logged in and the user tries to visit a protected route */}
                 <Route path="*" element={<LoadingPage />} />
 
 
               </Routes>
             </BrowserRouter>
+            </GameToastProvider>
           </FingerprintProvider>
         </ToastProvider>
       </ErrorBoundary>

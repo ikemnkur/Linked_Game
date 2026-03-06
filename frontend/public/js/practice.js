@@ -5,6 +5,7 @@ window.PracticePage = (() => {
   let board = null;
   let mode = 'move';       // 'move' | 'place' | 'erase'
   let selectedColor = 'red';
+  let selectedValue = 1;
   let selectedPiece = null;
 
   function render() {
@@ -33,6 +34,22 @@ window.PracticePage = (() => {
           <button class="color-btn green" data-color="green"></button>
           <button class="color-btn yellow" data-color="yellow"></button>
         </div>
+
+        <div class="value-picker" id="value-picker" style="margin-top: 12px;">
+          <label style="color: var(--text-muted); margin-right: 8px;">Piece Value:</label>
+          <button class="value-btn selected" data-value="1">1</button>
+          <button class="value-btn" data-value="2">2</button>
+          <button class="value-btn" data-value="3">3</button>
+        </div>
+
+        <div class="rotation-controls" style="margin-top: 12px; display: flex; gap: 8px; justify-content: center;">
+          <label style="color: var(--text-muted);">View from:</label>
+          <button class="rotate-color-btn" data-color="red">Red</button>
+          <button class="rotate-color-btn" data-color="blue">Blue</button>
+          <button class="rotate-color-btn" data-color="green">Green</button>
+          <button class="rotate-color-btn" data-color="yellow">Yellow</button>
+        </div>
+        <br> 
 
         <div class="board-container" id="board-container"></div>
         <p class="error-msg" id="practice-info" style="color: var(--text-muted); margin-top:12px;"></p>
@@ -64,6 +81,23 @@ window.PracticePage = (() => {
       });
     });
 
+    // Value picker
+    document.querySelectorAll('.value-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedValue = parseInt(btn.dataset.value);
+        document.querySelectorAll('.value-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      });
+    });
+
+    // Rotation controls
+    document.querySelectorAll('.rotate-color-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const color = btn.dataset.color;
+        renderer.rotateToPlayer(color);
+      });
+    });
+
     setMode('move');
   }
 
@@ -90,7 +124,7 @@ window.PracticePage = (() => {
   function handleClick(r, c) {
     if (mode === 'place') {
       if (board[r][c] === null) {
-        board[r][c] = { color: selectedColor };
+        board[r][c] = { color: selectedColor, value: selectedValue };
         renderer.setBoard(board);
       }
       return;

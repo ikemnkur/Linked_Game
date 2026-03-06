@@ -1,9 +1,8 @@
 /* ─── Lobby Page (React) ──────────────────────────────── */
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SocketClient from '/game/socket.js'; //'../socket'; 
-
-import { useGameToast } from '/game/GameToast';
+import SocketClient from '../socket';
+import { useGameToast } from '../GameToast';
 
 const API_BASE = import.meta.env.VITE_API_BASE || '';
 

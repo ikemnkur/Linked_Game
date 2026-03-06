@@ -11,14 +11,17 @@ window.LinkedEngine = (() => {
 
   function createStartingBoard() {
     const board = createEmptyBoard();
+    // Piece values: [x, 3, 2, 1, 1, 2, 3, x]
+    const values = [null, 3, 2, 1, 1, 2, 3, null];
+    
     // Red = top (row 0, cols 1-6)
-    for (let c = 1; c <= 6; c++) board[0][c] = { color: 'red' };
+    for (let c = 1; c <= 6; c++) board[0][c] = { color: 'red', value: values[c] };
     // Blue = bottom (row 7, cols 1-6)
-    for (let c = 1; c <= 6; c++) board[7][c] = { color: 'blue' };
+    for (let c = 1; c <= 6; c++) board[7][c] = { color: 'blue', value: values[c] };
     // Green = left (col 0, rows 1-6)
-    for (let r = 1; r <= 6; r++) board[r][0] = { color: 'green' };
+    for (let r = 1; r <= 6; r++) board[r][0] = { color: 'green', value: values[r] };
     // Yellow = right (col 7, rows 1-6)
-    for (let r = 1; r <= 6; r++) board[r][7] = { color: 'yellow' };
+    for (let r = 1; r <= 6; r++) board[r][7] = { color: 'yellow', value: values[r] };
     return board;
   }
 
@@ -55,26 +58,22 @@ window.LinkedEngine = (() => {
   }
 
   function findPushLanding(board, origR, origC, attackedR, attackedC) {
-    const origAdjacent = new Set();
-    for (const [nr, nc] of getAdjacentSquares(origR, origC)) {
-      origAdjacent.add(`${nr},${nc}`);
-    }
-    origAdjacent.add(`${origR},${origC}`);
+    const dr = attackedR - origR; // push direction row (-1 or +1)
+    const dc = attackedC - origC; // push direction col (-1 or +1)
 
-    const visited = new Set();
-    const queue = [[attackedR, attackedC]];
-    visited.add(`${attackedR},${attackedC}`);
+    // Priority-ordered push destinations:
+    // [1] Continue diagonal, [2] two orthogonal components, [3] two remaining diagonals
+    const candidates = [
+      [attackedR + dr, attackedC + dc],   // [1] diagonal continuation
+      [attackedR + dr, attackedC],         // [2] orthogonal (row component)
+      [attackedR, attackedC + dc],         // [2] orthogonal (col component)
+      [attackedR - dr, attackedC + dc],    // [3] far diagonal
+      [attackedR + dr, attackedC - dc],    // [3] far diagonal
+    ];
 
-    while (queue.length > 0) {
-      const [r, c] = queue.shift();
-      for (const [nr, nc] of getAdjacentSquares(r, c)) {
-        const key = `${nr},${nc}`;
-        if (visited.has(key)) continue;
-        visited.add(key);
-        if (board[nr][nc] === null && !origAdjacent.has(key)) {
-          return [nr, nc];
-        }
-        queue.push([nr, nc]);
+    for (const [r, c] of candidates) {
+      if (inBounds(r, c) && board[r][c] === null) {
+        return [r, c];
       }
     }
     return null;
@@ -152,7 +151,7 @@ window.LinkedEngine = (() => {
     // 2-square diagonal = checker-style hop over an enemy piece
     const isHop  = isTwoAwayDiagonally;
 
-    if ((!isDiag && !isOrtho) ) {
+    if (!isDiag && !isOrtho && !isTwoAwayDiagonally) {
       return { valid: false, error: 'Invalid move distance.' };
     }
 
@@ -185,21 +184,18 @@ window.LinkedEngine = (() => {
       }
     }
 
-    // Checker-style hop: 2-square diagonal jump over exactly one enemy piece
+    // Checker-style capture: 2-square diagonal jump over an enemy piece
     if (isHop) {
       if (b[tr][tc] !== null) {
-        return { valid: false, error: 'Cannot hop – landing square is occupied.' };
+        return { valid: false, error: 'Cannot capture – landing square is occupied.' };
       }
-      // The piece being jumped is at the midpoint
       const midR = fr + dr / 2;
       const midC = fc + dc / 2;
       if (!b[midR][midC] || b[midR][midC].color === playerColor) {
-        return { valid: false, error: 'Cannot hop – must jump over an enemy piece.' };
+        return { valid: false, error: 'Cannot capture – must jump over an enemy piece.' };
       }
-      // Landing must connect to a friendly (same rule as any diagonal move)
-      const willConnect = hasAdjacentFriendly(b, tr, tc, playerColor, fr, fc);
-      if (!willConnect) return { valid: false, error: 'Hop must connect to a friendly piece.' };
-      // Perform the hop – enemy piece stays (no capture, per base rules)
+      // Capture: delete the enemy piece; links may break (allowed for captures)
+      b[midR][midC] = null;
       b[tr][tc] = b[fr][fc];
       b[fr][fc] = null;
     }
@@ -261,11 +257,13 @@ window.LinkedEngine = (() => {
   }
 
   function countCenter(board, color) {
-    let count = 0;
+    let points = 0;
     for (const [r, c] of CENTER_SQUARES) {
-      if (board[r][c] && board[r][c].color === color) count++;
+      if (board[r][c] && board[r][c].color === color) {
+        points += board[r][c].value || 1;
+      }
     }
-    return count;
+    return points;
   }
 
   return {

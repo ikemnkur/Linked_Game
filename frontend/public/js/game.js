@@ -38,6 +38,9 @@ window.GamePage = (() => {
           <div class="game-left">
             <div id="player-clocks" class="player-clocks"></div>
             <div class="board-container" id="board-container"></div>
+            <div class="board-controls">
+              <button id="rotate-btn" class="btn-icon" title="Rotate board to your perspective">🔄</button>
+            </div>
             <div class="player-labels" id="player-labels"></div>
             <p class="error-msg" id="game-error"></p>
             <div class="game-actions" id="game-actions">
@@ -47,10 +50,19 @@ window.GamePage = (() => {
           </div>
           <div class="game-right">
             <div class="move-log-panel card" id="move-log-panel">
-              <h3>Move History</h3>
+              <div class="move-log-header">
+                <h3>Move History</h3>
+               
+              </div>
               <div class="move-log-list" id="move-log-list">
                 <p class="empty-log">No moves yet.</p>
               </div>
+              <br>
+               <div class="move-log-actions">
+                  <button id="review-game-btn" class="btn-sm" title="Review game">🎬 Review</button>
+                  <button id="download-game-btn" class="btn-sm" title="Download history">⬇ Download</button>
+                  <button id="share-game-btn" class="btn-sm" title="Share game">🔗 Share</button>
+                </div>
             </div>
           </div>
         </div>
@@ -58,6 +70,18 @@ window.GamePage = (() => {
       <div class="win-banner" id="win-banner" style="display:none">
         <h1 id="win-text"></h1>
         <button id="win-back-btn">Back to Lobby</button>
+      </div>
+
+      <div class="share-modal" id="share-modal" style="display:none">
+        <div class="share-modal-box">
+          <h3>Share Game</h3>
+          <p>Game ID: <strong id="share-game-id"></strong></p>
+          <div class="share-modal-actions">
+            <button id="copy-link-btn">🔗 Copy Link</button>
+            <button id="copy-json-btn" class="btn-secondary">📄 Copy JSON</button>
+          </div>
+          <button id="close-share-modal" class="btn-secondary" style="margin-top:12px; width:100%">Close</button>
+        </div>
       </div>
     `;
 
@@ -72,7 +96,7 @@ window.GamePage = (() => {
 
     SocketClient.connect();
     SocketClient.joinGame(gameId);
-    
+
     // Store handler references for cleanup
     gameUpdateHandler = (game) => {
       // Detect player joins
@@ -97,17 +121,30 @@ window.GamePage = (() => {
       const currentMoveCount = (game.moveHistory || []).length;
       if (currentMoveCount > previousMoveCount) {
         const lastMove = game.moveHistory[currentMoveCount - 1];
-        
+
         // Check if it was a special event
         if (lastMove.event === 'eliminated' || lastMove.event === 'resigned') {
           // Don't play move sound for eliminations/resignations
+          if (lastMove.event === 'eliminated') {
+            SoundManager.play('elimination');
+          } else if (lastMove.event === 'resigned') {
+            SoundManager.play('resign');
+          }
         } else if (lastMove.from && lastMove.to) {
           // Regular move - check if it was a capture
           const dr = Math.abs(lastMove.to[0] - lastMove.from[0]);
           const dc = Math.abs(lastMove.to[1] - lastMove.from[1]);
-          const isAttackOrHop = (dr === 1 && dc === 1) || (dr === 2 && dc === 2);
-          
-          if (isAttackOrHop) {
+          const isAttack = (dr === 1 && dc === 1);
+          const isHop = (dr === 2 && dc === 2);
+          // Check old board to see if there was an enemy piece at the destination
+          const destCell = gameState && gameState.board
+            ? gameState.board[lastMove.to[0]][lastMove.to[1]]
+            : null;
+          const hadEnemy = destCell !== null && destCell !== undefined
+            && destCell.color !== lastMove.color;
+          if (isAttack && hadEnemy) {
+            SoundManager.play('hit');
+          } else if (isHop) {
             SoundManager.play('capture');
           } else {
             SoundManager.play('move');
@@ -121,19 +158,30 @@ window.GamePage = (() => {
       if (game.status === 'finished' && previousGameStatus === 'playing') {
         const user = getUser();
         const userPlayer = game.players.find(p => p.id === user.id);
-        
-        if (game.winner === 'draw') {
-          // Draw - no win/lose sound
-        } else if (userPlayer && userPlayer.color === game.winner) {
-          SoundManager.play('win');
-        } else if (userPlayer) {
-          SoundManager.play('lose');
-        }
+        setTimeout(() => {
+          if (game.winner === 'draw') {
+            // Draw - no win/lose sound
+            SoundManager.play('draw');
+          } else if (userPlayer && userPlayer.color === game.winner) {
+            SoundManager.play('win');
+          } else if (userPlayer) {
+            SoundManager.play('lose');
+          }
+        }, 1000); // Delay to allow win banner to show
       }
 
       previousGameStatus = game.status;
 
       previousPlayerCount = game.players.length;
+
+      // Detect if there's a new regular move to animate
+      const lastMove = (game.moveHistory || []).length > 0
+        ? game.moveHistory[game.moveHistory.length - 1]
+        : null;
+      const isNewRegularMove = lastMove && lastMove.from && lastMove.to
+        && (game.moveHistory.length > ((gameState && gameState.moveHistory) || []).length);
+
+      const oldBoard = gameState ? gameState.board : null;
 
       // Update game state
       gameState = game;
@@ -143,10 +191,18 @@ window.GamePage = (() => {
         localTurnStart = game.turnStartTs || Date.now();
         currentTickColor = game.players[game.currentTurn]?.color || null;
       }
-      updateUI(user);
+
+      // Animate if we have an old board and a new move; otherwise just update
+      if (isNewRegularMove && oldBoard && renderer) {
+        // Update UI text elements (turn indicator, clocks, move log) immediately
+        updateUI(user, true); // true = skip setBoard
+        renderer.animateMove(oldBoard, game.board, lastMove.from, lastMove.to);
+      } else {
+        updateUI(user);
+      }
     };
     SocketClient.onGameUpdate(gameUpdateHandler);
-    
+
     timerTickHandler = (data) => {
       localClocks = data.clocks;
       currentTickColor = data.currentColor;
@@ -154,7 +210,7 @@ window.GamePage = (() => {
       renderClocks();
     };
     SocketClient.onTimerTick(timerTickHandler);
-    
+
     moveErrorHandler = ({ error }) => {
       document.getElementById('game-error').textContent = error;
       setTimeout(() => {
@@ -163,7 +219,7 @@ window.GamePage = (() => {
       }, 3000);
     };
     SocketClient.onMoveError(moveErrorHandler);
-    
+
     drawRequestedHandler = (data) => {
       const { requestedBy, agreedCount, totalPlayers } = data;
       Toast.warning(`${requestedBy} requested a draw (${agreedCount}/${totalPlayers} agreed)`, 5000);
@@ -185,6 +241,72 @@ window.GamePage = (() => {
       Toast.info('Draw request sent. Waiting for other players to agree...', 3000);
     });
 
+    // Move-log action buttons (set up after DOM is ready; safe to add immediately)
+    document.getElementById('review-game-btn').addEventListener('click', () => {
+      window.App.navigate(`/review/${gameId}`);
+    });
+
+    document.getElementById('download-game-btn').addEventListener('click', async () => {
+      try {
+        const res = await fetch(`/api/games/${gameId}/history/download`);
+        if (!res.ok) throw new Error('Not found');
+        const data = await res.json();
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `game-${gameId}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        Toast.success('Game history downloaded!', 2000);
+      } catch {
+        Toast.error('Download failed – game may still be in progress.', 3000);
+      }
+    });
+
+    document.getElementById('share-game-btn').addEventListener('click', () => {
+      const modal = document.getElementById('share-modal');
+      document.getElementById('share-game-id').textContent = gameId;
+      modal.style.display = 'flex';
+    });
+
+    document.getElementById('close-share-modal').addEventListener('click', () => {
+      document.getElementById('share-modal').style.display = 'none';
+    });
+
+    document.getElementById('share-modal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) e.currentTarget.style.display = 'none';
+    });
+
+    document.getElementById('copy-link-btn').addEventListener('click', () => {
+      const link = `${location.origin}/game/${gameId}`;
+      navigator.clipboard.writeText(link)
+        .then(() => Toast.success('Link copied!', 2000))
+        .catch(() => Toast.error('Copy failed', 2000));
+    });
+
+    document.getElementById('copy-json-btn').addEventListener('click', async () => {
+      try {
+        const res = await fetch(`/api/games/${gameId}/history`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
+        Toast.success('JSON copied to clipboard!', 2000);
+      } catch {
+        Toast.error('Could not copy JSON – game may still be in progress.', 3000);
+      }
+    });
+
+    // Rotate button
+    document.getElementById('rotate-btn').addEventListener('click', () => {
+      if (!gameState) return;
+      const userPlayer = gameState.players.find(p => p.id === user.id);
+      if (userPlayer) {
+        renderer.rotateToPlayer(userPlayer.color);
+        Toast.info(`Board rotated to ${userPlayer.color} perspective`, 2000);
+      }
+    });
+
     // Local clock countdown for smooth display
     clockInterval = setInterval(renderClocks, 250);
   }
@@ -201,13 +323,13 @@ window.GamePage = (() => {
         const user = getUser();
         updateUI(user);
       }
-    } catch {}
+    } catch { }
   }
 
-  function updateUI(user) {
+  function updateUI(user, skipBoard) {
     if (!gameState || !renderer) return;
 
-    renderer.setBoard(gameState.board);
+    if (!skipBoard) renderer.setBoard(gameState.board);
 
     // Title
     document.getElementById('game-title').textContent = gameState.name;
@@ -272,7 +394,7 @@ window.GamePage = (() => {
       }
       banner.style.display = 'flex';
 
-    //   disappears after 3 seconds     
+      //   disappears after 3 seconds     
       setTimeout(() => {
         banner.style.display = 'none';
       }, 3000);
@@ -304,7 +426,7 @@ window.GamePage = (() => {
         } else {
           remaining = Math.max(0, (gameState.timerValue * 1000) - elapsed);
         }
-        
+
         // Play hurry up sound when time is low (once per turn)
         if (remaining < 20000 && remaining > 0 && !hasPlayedHurryUp) {
           const user = getUser();
@@ -349,28 +471,41 @@ window.GamePage = (() => {
 
     // Show latest moves at top, limit 50
     const recent = moves.slice(-50).reverse();
-    el.innerHTML = recent.map(m => {
+    el.innerHTML = recent.map((m, idx, arr) => {
+      // Time since previous move (arr is reversed so next item is the prior move)
+      const prevMove = arr[idx + 1];
+      const timeDiff = (m.timestamp && prevMove && prevMove.timestamp)
+        ? ((m.timestamp - prevMove.timestamp) / 1000).toFixed(1)
+        : null;
+      const timeTag = timeDiff !== null
+        ? `<span class="move-time">${timeDiff}s</span>`
+        : '';
+
       if (m.event === 'eliminated') {
         return `<div class="move-entry elimination">
           <span class="move-dot" style="background:${getColorCSS(m.color)}"></span>
           <span>${m.color} eliminated (${m.reason})</span>
+          ${timeTag}
         </div>`;
       }
       if (m.event === 'turnSkipped') {
         return `<div class="move-entry turn-skipped">
           <span class="move-dot" style="background:${getColorCSS(m.color)}"></span>
           <span>${m.color} turn skipped (${m.reason})</span>
+          ${timeTag}
         </div>`;
       }
       if (m.event === 'resigned') {
         return `<div class="move-entry resignation">
           <span class="move-dot" style="background:${getColorCSS(m.color)}"></span>
           <span>${m.color} resigned</span>
+          ${timeTag}
         </div>`;
       }
       if (m.event === 'draw') {
         return `<div class="move-entry draw-agreed">
           <span>🤝 Game ended in a draw (${m.reason})</span>
+          ${timeTag}
         </div>`;
       }
       const fromStr = `${String.fromCharCode(97 + m.from[1])}${8 - m.from[0]}`;
@@ -379,6 +514,7 @@ window.GamePage = (() => {
         <span class="move-num">#${m.turn + 1}</span>
         <span class="move-dot" style="background:${getColorCSS(m.color)}"></span>
         <span>${m.username}: ${fromStr}→${toStr}</span>
+        ${timeTag}
       </div>`;
     }).join('');
 
@@ -456,7 +592,7 @@ window.GamePage = (() => {
     if (timerTickHandler) SocketClient.off('game:timerTick', timerTickHandler);
     if (moveErrorHandler) SocketClient.off('game:moveError', moveErrorHandler);
     if (drawRequestedHandler) SocketClient.off('game:drawRequested', drawRequestedHandler);
-    
+
     if (clockInterval) { clearInterval(clockInterval); clockInterval = null; }
     renderer = null;
     gameState = null;

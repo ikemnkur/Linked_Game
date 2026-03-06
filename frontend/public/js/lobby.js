@@ -30,6 +30,7 @@ window.LobbyPage = (() => {
           </div>
           <div class="lobby-actions">
             <button id="show-create-form-btn">Create Game</button>
+            <button id="stats-btn" class="btn-secondary">Stats</button>
             <button id="practice-btn" class="btn-secondary">Practice Room</button>
             <button id="rules-btn" class="btn-secondary">How to Play</button>
             <button id="logout-btn" class="btn-secondary">Logout</button>
@@ -110,6 +111,7 @@ window.LobbyPage = (() => {
       e.preventDefault();
       createGame();
     });
+    document.getElementById('stats-btn').addEventListener('click', () => window.App.navigate('/stats'));
     document.getElementById('practice-btn').addEventListener('click', () => window.App.navigate('/practice'));
     document.getElementById('rules-btn').addEventListener('click', () => window.App.navigate('/rules'));
     document.getElementById('logout-btn').addEventListener('click', () => {
@@ -139,7 +141,12 @@ window.LobbyPage = (() => {
     }
 
     const user = getUser();
-    container.innerHTML = games.map(g => {
+
+    // Partition into waiting and active (API already excludes finished)
+    const waiting = games.filter(g => g.status === 'waiting');
+    const active  = games.filter(g => g.status === 'playing');
+
+    function renderGameCard(g) {
       const maxP = g.maxPlayers || 4;
       const dots = [];
       const COLORS = ['red', 'blue', 'green', 'yellow'];
@@ -151,50 +158,63 @@ window.LobbyPage = (() => {
         }
       }
 
-      const isJoined = g.players.some(p => p.username === user.username);
-      const canJoin = g.status === 'waiting' && g.playerCount < maxP && !isJoined;
-      const canEnter = isJoined && g.status === 'playing';
+      const isJoined  = g.players.some(p => p.username === user.username);
+      const canJoin   = g.status === 'waiting' && g.playerCount < maxP && !isJoined;
+      const canEnter  = isJoined && g.status === 'playing';
+      const canWatch  = !isJoined && g.status === 'playing';
 
       let timerBadge = '';
       if (g.timerMode === 'total') timerBadge = `<span class="timer-badge">${g.timerValue}m total</span>`;
       else if (g.timerMode === 'perTurn') timerBadge = `<span class="timer-badge">${g.timerValue}s/turn</span>`;
 
+      let statusLabel = g.status === 'playing' ? '🔴 Live' : `${g.playerCount}/${maxP} players · waiting`;
+
       let actionBtn = '';
       if (canJoin) {
         actionBtn = `<button class="join-btn" data-id="${g.id}">Join</button>`;
       } else if (canEnter) {
-        // automatically enter if game is already in progress and user is a participant
-        setTimeout(() => {
-        window.App.navigate(`/game/${g.id}`);
-        }, 1000); // slight delay to ensure lobby updates first
-
-        actionBtn = `<button class="enter-btn" data-id="${g.id}" disabled>Entering…</button>`;
-
-        // actionBtn = `<button class="enter-btn" data-id="${g.id}">Enter Game</button>`;
+        actionBtn = `<button class="enter-btn" data-id="${g.id}">Enter Game</button>`;
       } else if (isJoined && g.status === 'waiting') {
         actionBtn = `<button class="enter-btn" data-id="${g.id}" disabled>Waiting…</button>`;
-      } else if (g.status === 'finished') {
-        actionBtn = `<span style="color:var(--text-muted)">Finished</span>`;
+      } else if (canWatch) {
+        actionBtn = `<button class="watch-btn" data-id="${g.id}">👁 Watch</button>`;
       }
 
       return `
-        <div class="card game-card">
+        <div class="card game-card ${g.status === 'playing' ? 'game-card-active' : ''}">
           <div class="game-info">
             <h3>${g.name} ${timerBadge}</h3>
-            <p class="player-count">${g.playerCount}/${maxP} players · ${g.status}</p>
+            <p class="player-count">${statusLabel}</p>
           </div>
           <div class="player-dots">${dots.join('')}</div>
           ${actionBtn}
         </div>
       `;
-    }).join('');
+    }
 
-    // Bind join buttons
+    let html = '';
+    if (active.length > 0) {
+      html += `<div class="lobby-section-header">Active Games</div>`;
+      html += active.map(renderGameCard).join('');
+    }
+    if (waiting.length > 0) {
+      html += `<div class="lobby-section-header">Open Games</div>`;
+      html += waiting.map(renderGameCard).join('');
+    }
+    if (!html) {
+      html = '<div class="empty-lobby">No open games. Create one to get started!</div>';
+    }
+    container.innerHTML = html;
+
+    // Bind buttons
     container.querySelectorAll('.join-btn').forEach(btn => {
       btn.addEventListener('click', () => joinGame(btn.dataset.id));
     });
     container.querySelectorAll('.enter-btn').forEach(btn => {
       btn.addEventListener('click', () => window.App.navigate(`/game/${btn.dataset.id}`));
+    });
+    container.querySelectorAll('.watch-btn').forEach(btn => {
+      btn.addEventListener('click', () => window.App.navigate(`/spectate/${btn.dataset.id}`));
     });
   }
 

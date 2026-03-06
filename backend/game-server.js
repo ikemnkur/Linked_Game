@@ -14,10 +14,24 @@ const HISTORY_DIR = path.join(__dirname, 'data', 'game_history');
 if (!fs.existsSync(HISTORY_DIR)) fs.mkdirSync(HISTORY_DIR, { recursive: true });
 
 // ─── In-memory timer state (not persisted to JSON) ────────
-const activeTimers = {};  // gameId -> intervalId
-const gameClocks  = {};  // gameId -> { color: remainingMs, ... }
-const turnStartTs = {};  // gameId -> Date.now() when current turn began
-const drawRequests = {};  // gameId -> { requestedBy: userId, agreedBy: [userIds] }
+const activeTimers   = {};  // gameId -> intervalId
+const gameClocks     = {};  // gameId -> { color: remainingMs, ... }
+const turnStartTs    = {};  // gameId -> Date.now() when current turn began
+const drawRequests   = {};  // gameId -> { requestedBy: userId, agreedBy: [userIds] }
+const spectateChats  = {};  // gameId -> [{username, message, ts}, ...]
+
+// ─── Pending-game cleanup (every 60 s, remove waiting games older than 5 min)
+setInterval(() => {
+  const db = readDB();
+  const cutoff = Date.now() - 5 * 60 * 1000;
+  const before = db.games.length;
+  db.games = db.games.filter(g => !(g.status === 'waiting' && (g.createdAt || 0) < cutoff));
+  if (db.games.length !== before) {
+    writeDB(db);
+    io.emit('lobby:update');
+    console.log(`Cleaned up ${before - db.games.length} stale pending game(s).`);
+  }
+}, 60 * 1000);
 
 // ─── helpers ──────────────────────────────────────────────
 function readDB() {
@@ -68,7 +82,7 @@ app.post('/api/auth', (req, res) => {
       username: username.trim(),
       password: password || null,
       email: email ? email.trim() : null,
-      stats: { wins: 0, losses: 0, draws: 0, gamesPlayed: 0 },
+      stats: { wins: 0, losses: 0, draws: 0, gamesPlayed: 0, elo: 1200 },
       createdAt: new Date().toISOString()
     };
     db.users.push(user);
@@ -81,7 +95,12 @@ app.post('/api/auth', (req, res) => {
     
     // Ensure stats exist for existing users
     if (!user.stats) {
-      user.stats = { wins: 0, losses: 0, draws: 0, gamesPlayed: 0 };
+      user.stats = { wins: 0, losses: 0, draws: 0, gamesPlayed: 0, elo: 1200 };
+      writeDB(db);
+    }
+    // Add ELO if missing
+    if (user.stats.elo === undefined) {
+      user.stats.elo = 1200;
       writeDB(db);
     }
   }
@@ -91,19 +110,21 @@ app.post('/api/auth', (req, res) => {
   res.json({ user: userWithoutPassword });
 });
 
-// List games
+// List games (exclude finished)
 app.get('/api/games', (_req, res) => {
   const db = readDB();
-  const games = db.games.map(g => ({
-    id: g.id,
-    name: g.name,
-    status: g.status,
-    playerCount: g.players.length,
-    maxPlayers: g.maxPlayers || 4,
-    players: g.players.map(p => ({ username: p.username, color: p.color })),
-    timerMode: g.timerMode || 'none',
-    timerValue: g.timerValue || 0,
-  }));
+  const games = db.games
+    .filter(g => g.status !== 'finished')
+    .map(g => ({
+      id: g.id,
+      name: g.name,
+      status: g.status,
+      playerCount: g.players.length,
+      maxPlayers: g.maxPlayers || 4,
+      players: g.players.map(p => ({ username: p.username, color: p.color })),
+      timerMode: g.timerMode || 'none',
+      timerValue: g.timerValue || 0,
+    }));
   res.json({ games });
 });
 
@@ -132,6 +153,7 @@ app.post('/api/games', (req, res) => {
     id: uuidv4(),
     name: gameName || `${user.username}'s Game`,
     status: 'waiting',
+    createdAt: Date.now(),
     maxPlayers: max,
     players: [{ id: user.id, username: user.username, color: COLORS[0] }],
     board: createEmptyBoard(),
@@ -194,6 +216,102 @@ app.get('/api/games/:gameId', (req, res) => {
   res.json({ game: sanitizeGame(game) });
 });
 
+// Get live game state for spectators (same as above but explicit endpoint)
+app.get('/api/games/:gameId/live', (req, res) => {
+  const db = readDB();
+  const game = db.games.find(g => g.id === req.params.gameId);
+  if (!game) return res.status(404).json({ error: 'Game not found.' });
+  res.json({ game: sanitizeGame(game) });
+});
+
+// Get user stats
+app.get('/api/users/:userId/stats', (req, res) => {
+  const db = readDB();
+  const user = db.users.find(u => u.id === req.params.userId);
+  if (!user) return res.status(404).json({ error: 'User not found.' });
+  
+  const stats = user.stats || { wins: 0, losses: 0, draws: 0, gamesPlayed: 0, elo: 1200 };
+  res.json({ 
+    username: user.username, 
+    stats,
+    createdAt: user.createdAt 
+  });
+});
+
+// Get leaderboard
+app.get('/api/leaderboard', (req, res) => {
+  const db = readDB();
+  const leaderboard = db.users
+    .filter(u => u.stats && u.stats.gamesPlayed > 0)
+    .map(u => ({
+      id: u.id,
+      username: u.username,
+      elo: u.stats.elo || 1200,
+      wins: u.stats.wins || 0,
+      losses: u.stats.losses || 0,
+      draws: u.stats.draws || 0,
+      gamesPlayed: u.stats.gamesPlayed || 0
+    }))
+    .sort((a, b) => b.elo - a.elo)
+    .slice(0, 100);
+  
+  res.json({ leaderboard });
+});
+
+// Download game history
+app.get('/api/games/:gameId/history/download', (req, res) => {
+  try {
+    const histFile = path.join(HISTORY_DIR, `${req.params.gameId}.json`);
+    if (!fs.existsSync(histFile)) {
+      return res.status(404).json({ error: 'Game history not found.' });
+    }
+    
+    const histData = JSON.parse(fs.readFileSync(histFile, 'utf-8'));
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename="game-${req.params.gameId}.json"`);
+    res.json(histData);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to load game history.' });
+  }
+});
+
+// Get game history for review
+app.get('/api/games/:gameId/history', (req, res) => {
+  try {
+    const histFile = path.join(HISTORY_DIR, `${req.params.gameId}.json`);
+    if (!fs.existsSync(histFile)) {
+      return res.status(404).json({ error: 'Game history not found.' });
+    }
+    
+    const histData = JSON.parse(fs.readFileSync(histFile, 'utf-8'));
+    res.json(histData);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to load game history.' });
+  }
+});
+
+// Get user's game history list
+app.get('/api/users/:userId/games', (req, res) => {
+  const db = readDB();
+  const user = db.users.find(u => u.id === req.params.userId);
+  if (!user) return res.status(404).json({ error: 'User not found.' });
+  
+  const userGames = db.games
+    .filter(g => g.players.some(p => p.id === req.params.userId) && g.status === 'finished')
+    .sort((a, b) => (b.finishedAt || 0) - (a.finishedAt || 0))
+    .slice(0, 50)
+    .map(g => ({
+      id: g.id,
+      name: g.name,
+      winner: g.winner,
+      players: g.players.map(p => ({ username: p.username, color: p.color })),
+      turnCount: g.turnCount,
+      finishedAt: g.finishedAt
+    }));
+  
+  res.json({ games: userGames });
+});
+
 // ─── Board helpers ──────────────────────────────────────
 
 function createEmptyBoard() {
@@ -204,15 +322,18 @@ function createStartingBoard(players) {
   const board = createEmptyBoard();
   const colorToEdge = {};
   players.forEach(p => { colorToEdge[p.color] = p.color; });
+  
+  // Piece values: [x, 3, 2, 1, 1, 2, 3, x]
+  const values = [null, 3, 2, 1, 1, 2, 3, null];
 
   // Red = top edge (row 0, cols 1-6)
-  if (colorToEdge.red) for (let c = 1; c <= 6; c++) board[0][c] = { color: 'red' };
+  if (colorToEdge.red) for (let c = 1; c <= 6; c++) board[0][c] = { color: 'red', value: values[c] };
   // Blue = bottom edge (row 7, cols 1-6)
-  if (colorToEdge.blue) for (let c = 1; c <= 6; c++) board[7][c] = { color: 'blue' };
+  if (colorToEdge.blue) for (let c = 1; c <= 6; c++) board[7][c] = { color: 'blue', value: values[c] };
   // Green = left edge (col 0, rows 1-6)
-  if (colorToEdge.green) for (let r = 1; r <= 6; r++) board[r][0] = { color: 'green' };
+  if (colorToEdge.green) for (let r = 1; r <= 6; r++) board[r][0] = { color: 'green', value: values[r] };
   // Yellow = right edge (col 7, rows 1-6)
-  if (colorToEdge.yellow) for (let r = 1; r <= 6; r++) board[r][7] = { color: 'yellow' };
+  if (colorToEdge.yellow) for (let r = 1; r <= 6; r++) board[r][7] = { color: 'yellow', value: values[r] };
 
   return board;
 }
@@ -291,17 +412,18 @@ io.on('connection', (socket) => {
       gameClocks[game.id][playerColor] = Math.max(0, (gameClocks[game.id][playerColor] || 0) - elapsed);
     }
 
-    // Check win condition
+    // Check win condition - count points (piece values) in center
     const centerSquares = [[3,3],[3,4],[4,3],[4,4]];
-    const centerCounts = { red: 0, blue: 0, green: 0, yellow: 0 };
+    const centerPoints = { red: 0, blue: 0, green: 0, yellow: 0 };
     for (const [r,c] of centerSquares) {
       if (game.board[r][c]) {
-        centerCounts[game.board[r][c].color]++;
+        const piece = game.board[r][c];
+        centerPoints[piece.color] += piece.value || 1;
       }
     }
 
-    for (const color of Object.keys(centerCounts)) {
-      if (centerCounts[color] >= 3) {
+    for (const color of Object.keys(centerPoints)) {
+      if (centerPoints[color] >= 6) {
         game.centerHoldTracker[color]++;
       } else {
         game.centerHoldTracker[color] = 0;
@@ -310,9 +432,10 @@ io.on('connection', (socket) => {
 
     // Win if held for 2 turns
     for (const color of Object.keys(game.centerHoldTracker)) {
-      if (game.centerHoldTracker[color] >= 2) {
+      if (game.centerHoldTracker[color] >= 1) {
         game.winner = color;
         game.status = 'finished';
+        game.finishedAt = Date.now();
         clearInterval(activeTimers[game.id]);
         delete activeTimers[game.id];
         updatePlayerStats(game, db);
@@ -361,6 +484,7 @@ io.on('connection', (socket) => {
     if (alive.length <= 1) {
       if (alive.length === 1) game.winner = alive[0].color;
       game.status = 'finished';
+      game.finishedAt = Date.now();
       clearInterval(activeTimers[game.id]);
       delete activeTimers[game.id];
       updatePlayerStats(game, db);
@@ -409,6 +533,7 @@ io.on('connection', (socket) => {
       // If all players agreed, end game as draw
       if (agreedCount === game.players.length) {
         game.status = 'finished';
+        game.finishedAt = Date.now();
         game.winner = 'draw';
         clearInterval(activeTimers[game.id]);
         delete activeTimers[game.id];
@@ -430,6 +555,28 @@ io.on('connection', (socket) => {
         io.emit('lobby:update');
       }
     }
+  });
+
+  // ─── Spectate chat ─────────────────────────────────────────
+  socket.on('spectate:chat:send', ({ gameId, username, message }) => {
+    if (!gameId || !username || !message) return;
+    const text = String(message).trim().slice(0, 200);
+    if (!text) return;
+
+    if (!spectateChats[gameId]) spectateChats[gameId] = [];
+    const entry = { username: String(username).trim().slice(0, 20), message: text, ts: Date.now() };
+    spectateChats[gameId].push(entry);
+    // Keep last 100 messages
+    if (spectateChats[gameId].length > 100) spectateChats[gameId].shift();
+
+    io.to(gameId).emit('spectate:chat:msg', entry);
+  });
+
+  socket.on('spectate:join', ({ gameId }) => {
+    socket.join(gameId);
+    // Send chat history to the joiner
+    const history = spectateChats[gameId] || [];
+    socket.emit('spectate:chat:history', history);
   });
 
   socket.on('disconnect', () => {
@@ -456,8 +603,7 @@ function processMove(game, playerColor, from, to) {
   const isOrthogonal = (Math.abs(dr) + Math.abs(dc)) === 1;
   const isTwoAwayDiagonally = Math.abs(dr) === 2 && Math.abs(dc) === 2;
     
-  if ((!isDiagonal && !isOrthogonal)) {
-//   if ((!isDiagonal && !isOrthogonal) || (!isTwoAwayDiagonally && !isDiagonal && !isOrthogonal)) {
+  if (!isDiagonal && !isOrthogonal && !isTwoAwayDiagonally) {
     return { valid: false, error: 'Invalid move distance.' };
   }
 
@@ -495,6 +641,22 @@ function processMove(game, playerColor, from, to) {
     }
   }
 
+  // Checker-style capture: 2-square diagonal jump over an enemy piece
+  if (isTwoAwayDiagonally) {
+    if (board[tr][tc] !== null) {
+      return { valid: false, error: 'Cannot capture – landing square is occupied.' };
+    }
+    const midR = fr + dr / 2;
+    const midC = fc + dc / 2;
+    if (!board[midR][midC] || board[midR][midC].color === playerColor) {
+      return { valid: false, error: 'Cannot capture – must jump over an enemy piece.' };
+    }
+    // Capture: delete the enemy piece; links may break (allowed for captures)
+    board[midR][midC] = null;
+    board[tr][tc] = board[fr][fc];
+    board[fr][fc] = null;
+  }
+
   // Check linking — remove unlinked pieces
   removeUnlinkedPieces(board, playerColor);
 
@@ -502,44 +664,22 @@ function processMove(game, playerColor, from, to) {
 }
 
 function findPushLanding(board, origR, origC, attackedR, attackedC) {
-  // BFS from attacked square to find closest free square not adjacent to attacker's origin
-  const visited = new Set();
-  const queue = [[attackedR, attackedC, 0]];
-  visited.add(`${attackedR},${attackedC}`);
+  const dr = attackedR - origR; // push direction row (-1 or +1)
+  const dc = attackedC - origC; // push direction col (-1 or +1)
 
-  const origAdjacent = new Set();
-  for (let dr = -1; dr <= 1; dr++) {
-    for (let dc = -1; dc <= 1; dc++) {
-      if (dr === 0 && dc === 0) continue;
-      const nr = origR + dr;
-      const nc = origC + dc;
-      if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
-        origAdjacent.add(`${nr},${nc}`);
-      }
-    }
-  }
-  // Also exclude the original position itself
-  origAdjacent.add(`${origR},${origC}`);
+  // Priority-ordered push destinations:
+  // [1] Continue diagonal, [2] two orthogonal components, [3] two remaining diagonals
+  const candidates = [
+    [attackedR + dr, attackedC + dc],   // [1] diagonal continuation
+    [attackedR + dr, attackedC],         // [2] orthogonal (row component)
+    [attackedR, attackedC + dc],         // [2] orthogonal (col component)
+    [attackedR - dr, attackedC + dc],    // [3] far diagonal
+    [attackedR + dr, attackedC - dc],    // [3] far diagonal
+  ];
 
-  while (queue.length > 0) {
-    const [r, c, dist] = queue.shift();
-
-    // Check neighbors
-    for (let dr = -1; dr <= 1; dr++) {
-      for (let dc = -1; dc <= 1; dc++) {
-        if (dr === 0 && dc === 0) continue;
-        const nr = r + dr;
-        const nc = c + dc;
-        if (nr < 0 || nr >= 8 || nc < 0 || nc >= 8) continue;
-        const key = `${nr},${nc}`;
-        if (visited.has(key)) continue;
-        visited.add(key);
-
-        if (board[nr][nc] === null && !origAdjacent.has(key)) {
-          return [nr, nc];
-        }
-        queue.push([nr, nc, dist + 1]);
-      }
+  for (const [r, c] of candidates) {
+    if (r >= 0 && r < 8 && c >= 0 && c < 8 && board[r][c] === null) {
+      return [r, c];
     }
   }
   return null;
@@ -711,6 +851,7 @@ function eliminatePlayer(game, color, db) {
   if (alive.length <= 1) {
     if (alive.length === 1) game.winner = alive[0].color;
     game.status = 'finished';
+    game.finishedAt = Date.now();
     clearInterval(activeTimers[game.id]);
     delete activeTimers[game.id];
     updatePlayerStats(game, db);
@@ -781,21 +922,53 @@ function updatePlayerStats(game, db) {
 
   const isDraw = game.winner === 'draw';
   
-  game.players.forEach(player => {
-    const user = db.users.find(u => u.id === player.id);
-    if (!user) return;
-    if (!user.stats) user.stats = { wins: 0, losses: 0, draws: 0, gamesPlayed: 0 };
+  // Calculate ELO changes
+  const players = game.players.map(p => {
+    const user = db.users.find(u => u.id === p.id);
+    if (!user) return null;
+    if (!user.stats) user.stats = { wins: 0, losses: 0, draws: 0, gamesPlayed: 0, elo: 1200 };
+    if (user.stats.elo === undefined) user.stats.elo = 1200;
+    return { player: p, user, oldElo: user.stats.elo };
+  }).filter(Boolean);
 
-    user.stats.gamesPlayed++;
+  // For 4-player game, calculate ELO based on placement
+  if (!isDraw && players.length > 0) {
+    const avgElo = players.reduce((sum, p) => sum + p.oldElo, 0) / players.length;
+    const K = 32; // ELO K-factor
 
-    if (isDraw) {
+    players.forEach(({ player, user }) => {
+      let score;
+      if (player.color === game.winner) {
+        score = 1.0; // Winner
+      } else if (game.eliminatedColors && game.eliminatedColors.includes(player.color)) {
+        score = 0.0; // Eliminated
+      } else {
+        score = 0.33; // Survived but didn't win
+      }
+
+      const expected = 1 / (1 + Math.pow(10, (avgElo - user.stats.elo) / 400));
+      const eloChange = Math.round(K * (score - expected));
+      user.stats.elo = Math.max(100, user.stats.elo + eloChange); // Min ELO of 100
+
+      user.stats.gamesPlayed++;
+      if (isDraw) {
+        user.stats.draws++;
+      } else if (player.color === game.winner) {
+        user.stats.wins++;
+      } else {
+        user.stats.losses++;
+      }
+    });
+  } else {
+    // Draw - small ELO adjustments
+    game.players.forEach(player => {
+      const user = db.users.find(u => u.id === player.id);
+      if (!user) return;
+      if (!user.stats) user.stats = { wins: 0, losses: 0, draws: 0, gamesPlayed: 0, elo: 1200 };
+      user.stats.gamesPlayed++;
       user.stats.draws++;
-    } else if (player.color === game.winner) {
-      user.stats.wins++;
-    } else {
-      user.stats.losses++;
-    }
-  });
+    });
+  }
 
   writeDB(db);
 }
